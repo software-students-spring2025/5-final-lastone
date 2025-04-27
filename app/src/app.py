@@ -6,12 +6,13 @@ from datetime import datetime
 import os
 from dotenv import load_dotenv
 import bcrypt
+from map import map_bp
 
 load_dotenv()
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.getenv('FLASK_SECRET_KEY', 'default_secret_key')
-
+app.config['GOOGLE_MAP_API_KEY'] = os.getenv('GOOGLE_MAP_API_KEY')
 mongo_uri = os.getenv("MONGO_URI", "mongodb://localhost:27017/")
 client = None
 db = None
@@ -396,7 +397,7 @@ def index():
         return redirect(url_for('my_entries'))
     return redirect(url_for('login'))
 
-
+app.register_blueprint(map_bp)
 if __name__ == '__main__':
     db_connection = get_db()
     if db_connection is not None:

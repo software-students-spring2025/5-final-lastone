@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="map-container">
+    <div id="map" style="height: 80vh; width: 100%;"></div>
+    <div id="info-panel" style="padding: 10px; background: #f0f0f0;"></div>
+</div>
+
+<!-- Load Google Maps API -->
+<script src="https://maps.googleapis.com/maps/api/js?key={{ api_key }}&callback=initMap&libraries=geometry" async defer></script>
+
+<script> console.log("Raw JSON:", '{{ points | tojson | safe }}'); </script>
+
+<script>
+    window.initialLocation = {{ initial_location | tojson | safe }};
+    window.points = {{ points | tojson | safe }};
+</script>
+<!-- Your custom map JavaScript -->
+<script src="{{ url_for('static', filename='js/map.js') }}"></script>
+{% endblock %}
