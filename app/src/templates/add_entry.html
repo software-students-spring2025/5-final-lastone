@@ -24,9 +24,20 @@
             <input type="text" id="companions" name="companions">
         </div>
         <div>
-            <label for="rating">Rating (e.g., 1-5):</label>
-            <input type="number" id="rating" name="rating" step="0.1" min="0" max="5">
-        </div>
+            <label for="rating">Rating:</label>
+            <div class="star-rating">
+              <input type="hidden" id="rating" name="rating" value="0">
+              <div class="stars">
+                <span class="star" data-value="1"></span>
+                <span class="star" data-value="2"></span>
+                <span class="star" data-value="3"></span>
+                <span class="star" data-value="4"></span>
+                <span class="star" data-value="5"></span>
+              </div>
+            </div>
+          </div>
+          
+                
         <div>
             <label for="category">Category:</label>
             <input type="text" id="category" name="category">
@@ -41,5 +52,107 @@
 
     <p><a href="{{ url_for('my_entries') }}">Cancel</a></p>
 
+    <style>
+    .star-rating {
+        font-size: 2rem;
+        color: lightgray;
+        cursor: pointer;
+        display: inline-block;
+      }
+      
+      .star-rating .stars {
+        display: flex;
+        direction: ltr;
+      }
+      
+      .star-rating .star {
+        position: relative;
+        width: 2rem; 
+        height: 2rem;
+      }
+      
+      .star-rating .star::before {
+        content: "\2605"; 
+        position: absolute;
+        top: 0;
+        left: 0;
+        color: lightgray;
+        font-size: 2rem;
+        width: 100%;
+        height: 100%;
+        pointer-events: none;
+      }
+      
+      .star-rating .star.full::before {
+        color: gold;
+      }
+      
+      .star-rating .star.half::before {
+        background: linear-gradient(to right, gold 50%, lightgray 50%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+      
+      </style>
+      
+        
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const stars = document.querySelectorAll('.star-rating .star');
+            const ratingInput = document.getElementById('rating');
+
+            stars.forEach((star, index) => {
+                star.addEventListener('mousemove', function(e) {
+                const rect = star.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const width = rect.width;
+
+                const isHalf = x < width / 2;
+
+                highlightStars(index, isHalf);
+                });
+
+                star.addEventListener('mouseleave', function() {
+                highlightStarsFromInput();
+                });
+
+                star.addEventListener('click', function(e) {
+                const rect = star.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const width = rect.width;
+
+                const value = index + (x < width / 2 ? 0.5 : 1);
+                ratingInput.value = value;
+                highlightStars(index, x < width / 2);
+                });
+            });
+
+            function highlightStars(index, isHalf) {
+                stars.forEach((star, i) => {
+                star.classList.remove('full', 'half');
+                if (i < index) {
+                    star.classList.add('full');
+                } else if (i === index) {
+                    star.classList.add(isHalf ? 'half' : 'full');
+                }
+                });
+            }
+
+            function highlightStarsFromInput() {
+                const value = parseFloat(ratingInput.value);
+                stars.forEach((star, i) => {
+                star.classList.remove('full', 'half');
+                if (i + 1 <= value) {
+                    star.classList.add('full');
+                } else if (i + 0.5 === value) {
+                    star.classList.add('half');
+                }
+                });
+            }
+            });
+
+        </script>
+        
+        
 </body>
 </html>
