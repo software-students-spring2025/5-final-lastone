@@ -1,0 +1,5 @@
+#map {
+    height: 80vh;  /* Viewport height */
+    width: 100%;
+    background: #f0f0f0; /* Gray fallback */
+}
