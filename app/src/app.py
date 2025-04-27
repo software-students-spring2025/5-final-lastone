@@ -113,7 +113,10 @@ def login_required(view):
         return view(**kwargs)
     return wrapped_view
 
-
+@app.before_request
+def before_request():
+    g.db = get_db()
+    
 @app.route('/entries')
 @login_required
 def my_entries():
