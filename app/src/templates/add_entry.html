@@ -1,7 +1,3 @@
-{% extends "base.html" %}
-
-{% block title %}Add New Entry - Geometric Journal{% endblock %}
-
 {% block head_extra %}
     <style>
         #add-entry-map {
@@ -11,7 +7,7 @@
             box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
             margin-bottom: 1rem;
         }
-        .map-search-input {
+         .map-search-input {
              box-sizing: border-box;
              border: 1px solid transparent;
              width: 240px;
@@ -28,8 +24,42 @@
              margin-top: 10px;
              z-index: 5;
         }
-        .form-container {
+         .form-container {
             padding-top: 4rem;
+        }
+        .star-rating {
+            font-size: 2rem;
+            color: lightgray;
+            cursor: pointer;
+            display: inline-block;
+        }
+        .star-rating .stars {
+            display: flex;
+            direction: ltr;
+        }
+        .star-rating .star {
+            position: relative;
+            width: 2rem;
+            height: 2rem;
+        }
+        .star-rating .star::before {
+            content: "\2605";
+            position: absolute;
+            top: 0;
+            left: 0;
+            color: lightgray;
+            font-size: 2rem;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+        }
+        .star-rating .star.full::before {
+            color: gold;
+        }
+        .star-rating .star.half::before {
+            background: linear-gradient(to right, gold 50%, lightgray 50%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
     </style>
 {% endblock %}
@@ -71,11 +101,19 @@
                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
             </div>
             <div>
-                <label for="rating" class="block text-sm font-medium text-gray-700">Rating (e.g., 1-5):</label>
-                <input type="number" id="rating" name="rating" step="0.1" min="0" max="5"
-                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                <label for="rating">Rating:</label>
+                <div class="star-rating">
+                    <input type="hidden" id="rating" name="rating" value="0">
+                    <div class="stars">
+                        <span class="star" data-value="1"></span>
+                        <span class="star" data-value="2"></span>
+                        <span class="star" data-value="3"></span>
+                        <span class="star" data-value="4"></span>
+                        <span class="star" data-value="5"></span>
+                    </div>
+                </div>
             </div>
-            <div>
+             <div>
                 <label for="category" class="block text-sm font-medium text-gray-700">Category:</label>
                 <input type="text" id="category" name="category"
                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
@@ -110,9 +148,13 @@
         const placeNameInput = document.getElementById('place_name');
         const placeAddressInput = document.getElementById('place_address');
 
+        const stars = document.querySelectorAll('.star-rating .star');
+        const ratingInput = document.getElementById('rating');
+
+
         async function initMap() {
-            if (!apiKey || apiKey === 'None') {
-                console.error("Google Maps API key is not configured.");
+            if (!apiKey || apiKey === 'None' || apiKey === '') {
+                console.error("Google Maps API key is not configured or is empty.");
                 const mapDiv = document.getElementById('add-entry-map');
                 if (mapDiv) {
                     mapDiv.innerHTML = '<div class="flex items-center justify-center h-full text-red-600 font-semibold">Google Maps API key is missing or invalid. Please check configuration.</div>';
@@ -241,6 +283,61 @@
             document.head.appendChild(script);
         }
 
-        window.onload = loadGoogleMapsScript;
+        document.addEventListener('DOMContentLoaded', function () {
+            loadGoogleMapsScript();
+
+            stars.forEach((star, index) => {
+                star.addEventListener('mousemove', function(e) {
+                    const rect = star.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const width = rect.width;
+
+                    const isHalf = x < width / 2;
+
+                    highlightStars(index, isHalf);
+                });
+
+                star.addEventListener('mouseleave', function() {
+                    highlightStarsFromInput();
+                });
+
+                star.addEventListener('click', function(e) {
+                    const rect = star.getBoundingClientRect();
+                    const x = e.clientX - rect.left;
+                    const width = rect.width;
+
+                    const value = index + (x < width / 2 ? 0.5 : 1);
+                    ratingInput.value = value;
+                    highlightStars(index, x < width / 2);
+                });
+            });
+
+            function highlightStars(index, isHalf) {
+                stars.forEach((star, i) => {
+                    star.classList.remove('full', 'half');
+                    if (i < index) {
+                        star.classList.add('full');
+                    } else if (i === index) {
+                        star.classList.add(isHalf ? 'half' : 'full');
+                    }
+                });
+            }
+
+            function highlightStarsFromInput() {
+                const value = parseFloat(ratingInput.value);
+                stars.forEach((star, i) => {
+                    star.classList.remove('full', 'half');
+                    if (i + 1 <= value) {
+                        star.classList.add('full');
+                    } else if (i + 0.5 === value) {
+                        star.classList.add('half');
+                    }
+                });
+            }
+
+            highlightStarsFromInput();
+        });
+
+
     </script>
 {% endblock %}
