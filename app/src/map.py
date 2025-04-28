@@ -24,13 +24,13 @@ def show_map():
 
     unique_place_ids = list(set(place_ids))
 
-    places = list(places_collection.find({
+    places_with_coords = list(places_collection.find({
         "_id": {"$in": unique_place_ids},
         "coordinates": {"$exists": True, "$ne": None}
     }))
 
     points = []
-    for place in places:
+    for place in places_with_coords:
         if place.get('coordinates') and place['coordinates'].get('type') == 'Point' and len(place['coordinates'].get('coordinates', [])) == 2:
              lng, lat = place['coordinates']['coordinates']
              points.append({
@@ -41,15 +41,11 @@ def show_map():
                  'place_id': str(place['_id'])
              })
 
-    initial_location = {'lat': 39.8283, 'lng': -98.5795}
-
-    api_key = current_app.config.get('GOOGLE_MAP_API_KEY')
-
     recent_entries = list(entries_collection.aggregate([
         {"$match": {"user_id": user_id}},
-        {"$sort": {"date": -1}}, 
+        {"$sort": {"date": -1}},
         {"$limit": 10},
-        {"$lookup": { 
+        {"$lookup": {
             "from": "places",
             "localField": "place_id",
             "foreignField": "_id",
@@ -57,6 +53,20 @@ def show_map():
         }},
         {"$unwind": {"path": "$place_info", "preserveNullAndEmptyArrays": True}}
     ]))
+
+    initial_location = {'lat': 39.8283, 'lng': -98.5795}
+    initial_zoom = 4
+
+    if recent_entries:
+        latest_entry = recent_entries[0]
+        if latest_entry.get('place_info') and latest_entry['place_info'].get('coordinates') and \
+           latest_entry['place_info']['coordinates'].get('type') == 'Point' and \
+           len(latest_entry['place_info']['coordinates'].get('coordinates', [])) == 2:
+            lng, lat = latest_entry['place_info']['coordinates']['coordinates']
+            initial_location = {'lat': lat, 'lng': lng}
+            initial_zoom = 12
+
+    api_key = current_app.config.get('GOOGLE_MAP_API_KEY')
 
     for entry in recent_entries:
          entry['place_name'] = entry.get('place_info', {}).get('name', 'Unknown Place')
@@ -66,11 +76,11 @@ def show_map():
          else:
              entry['formatted_date'] = 'N/A'
 
-
     return render_template(
         'map.html',
         api_key=api_key,
         initial_location=initial_location,
+        initial_zoom=initial_zoom,
         points=points,
         recent_entries=recent_entries
     )

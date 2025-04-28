@@ -141,7 +141,6 @@ def my_entries():
 
     return render_template('my_entries.html', entries=entries_with_place)
 
-
 @app.route('/entries/add', methods=['GET', 'POST'])
 @login_required
 def add_entry():
@@ -162,8 +161,22 @@ def add_entry():
         category = request.form.get('category')
         review = request.form.get('review')
 
+        latitude = request.form.get('latitude')
+        longitude = request.form.get('longitude')
+
         if not place_name or not place_address or not entry_date_str or not review:
              return render_template('add_entry.html', error="Missing required fields.")
+
+        if latitude is not None and longitude is not None:
+             try:
+                 latitude = float(latitude)
+                 longitude = float(longitude)
+                 coordinates = {"type": "Point", "coordinates": [longitude, latitude]}
+             except ValueError:
+                 return render_template('add_entry.html', error="Invalid coordinate format.")
+        else:
+             coordinates = None
+
 
         try:
             entry_date = datetime.strptime(entry_date_str, '%Y-%m-%d')
@@ -177,27 +190,43 @@ def add_entry():
 
         companions = [c.strip() for c in companions_str.split(',') if c.strip()]
 
-        existing_place = places_collection.find_one({"address": place_address})
-
-        if existing_place:
-            place_id = existing_place['_id']
-            print(f"Found existing place: {place_name} ({place_id})")
+        place_id = None
+        if coordinates:
+             print(f"Coordinates provided. Creating new place with coordinates.")
+             new_place_data = {
+                 "name": place_name,
+                 "address": place_address,
+                 "coordinates": coordinates,
+                 "created_at": datetime.utcnow()
+             }
+             try:
+                 insert_place_result = places_collection.insert_one(new_place_data)
+                 place_id = insert_place_result.inserted_id
+                 print(f"Created new place: {place_name} ({place_id})")
+             except Exception as e:
+                  print(f"Error creating new place with coordinates: {e}")
+                  return render_template('add_entry.html', error="Error saving place information.")
         else:
-            print(f"Place not found. Creating new place without geocoding.")
+             existing_place = places_collection.find_one({"address": place_address})
 
-            new_place_data = {
-                "name": place_name,
-                "address": place_address,
-                "coordinates": None,
-                "created_at": datetime.utcnow()
-            }
-            try:
-                insert_place_result = places_collection.insert_one(new_place_data)
-                place_id = insert_place_result.inserted_id
-                print(f"Created new place: {place_name} ({place_id})")
-            except Exception as e:
-                 print(f"Error creating new place: {e}")
-                 return render_template('add_entry.html', error="Error saving place information.")
+             if existing_place:
+                 place_id = existing_place['_id']
+                 print(f"Found existing place by address: {place_name} ({place_id})")
+             else:
+                 print(f"Place not found by address. Creating new place without geocoding.")
+                 new_place_data = {
+                     "name": place_name,
+                     "address": place_address,
+                     "coordinates": None,
+                     "created_at": datetime.utcnow()
+                 }
+                 try:
+                     insert_place_result = places_collection.insert_one(new_place_data)
+                     place_id = insert_place_result.inserted_id
+                     print(f"Created new place: {place_name} ({place_id})")
+                 except Exception as e:
+                      print(f"Error creating new place without coordinates: {e}")
+                      return render_template('add_entry.html', error="Error saving place information.")
 
 
         entry_data = {
@@ -222,7 +251,8 @@ def add_entry():
 
 
     else:
-        return render_template('add_entry.html')
+        api_key = app.config.get('GOOGLE_MAP_API_KEY')
+        return render_template('add_entry.html', api_key=api_key)
 
 
 @app.route('/entries/edit/<entry_id>', methods=['GET', 'POST'])
@@ -250,9 +280,19 @@ def edit_entry(entry_id):
     if place:
         entry['place_name'] = place.get('name')
         entry['place_address'] = place.get('address')
+        if place.get('coordinates') and place['coordinates'].get('type') == 'Point' and len(place['coordinates'].get('coordinates', [])) == 2:
+             lng, lat = place['coordinates']['coordinates']
+             entry['latitude'] = lat
+             entry['longitude'] = lng
+        else:
+             entry['latitude'] = None
+             entry['longitude'] = None
+
     else:
         entry['place_name'] = 'Unknown Place'
         entry['place_address'] = 'Unknown Address'
+        entry['latitude'] = None
+        entry['longitude'] = None
         print(f"Warning: Place not found for entry ID {entry_id}")
 
 
@@ -265,8 +305,21 @@ def edit_entry(entry_id):
         category = request.form.get('category')
         review = request.form.get('review')
 
+        latitude = request.form.get('latitude')
+        longitude = request.form.get('longitude')
+
         if not place_name or not place_address or not entry_date_str or not review:
              return render_template('edit_entry.html', entry=entry, error="Missing required fields.")
+
+        if latitude is not None and longitude is not None:
+             try:
+                 latitude = float(latitude)
+                 longitude = float(longitude)
+                 coordinates = {"type": "Point", "coordinates": [longitude, latitude]}
+             except ValueError:
+                 return render_template('edit_entry.html', entry=entry, error="Invalid coordinate format.")
+        else:
+             coordinates = None
 
         try:
             entry_date = datetime.strptime(entry_date_str, '%Y-%m-%d')
@@ -283,35 +336,64 @@ def edit_entry(entry_id):
         current_place_id = entry.get('place_id')
         new_place_id = current_place_id
 
+        update_entry_place_id = False
+
         original_place_address = place.get('address') if place else None
 
-        if original_place_address != place_address:
-            print(f"Address changed for entry {entry_id}. Handling new place...")
-            existing_place = places_collection.find_one({"address": place_address})
+        if coordinates is not None:
+             if place:
+                  print(f"Updating coordinates for existing place {current_place_id}")
+                  places_collection.update_one(
+                      {"_id": current_place_id},
+                      {"$set": {"coordinates": coordinates, "updated_at": datetime.utcnow()}}
+                  )
+                  update_entry_place_id = False
+             else:
+                  print(f"No existing place linked. Creating new place with coordinates during edit.")
+                  new_place_data = {
+                      "name": place_name,
+                      "address": place_address,
+                      "coordinates": coordinates,
+                      "created_at": datetime.utcnow()
+                  }
+                  try:
+                      insert_place_result = places_collection.insert_one(new_place_data)
+                      new_place_id = insert_place_result.inserted_id
+                      update_entry_place_id = True
+                      print(f"Created new place and will link entry: {new_place_id}")
+                  except Exception as e:
+                       print(f"Error creating new place during edit with coordinates: {e}")
+                       return render_template('edit_entry.html', entry=entry, error="Error saving new place information.")
 
-            if existing_place:
-                new_place_id = existing_place['_id']
-                print(f"Linked to existing place by new address: {new_place_id}")
-            else:
-                print(f"New address not found. Creating new place without geocoding.")
+        elif original_place_address != place_address:
+             print(f"Address changed for entry {entry_id}, no new coordinates. Handling place by address...")
+             existing_place = places_collection.find_one({"address": place_address})
 
-                new_place_data = {
-                    "name": place_name,
-                    "address": place_address,
-                    "coordinates": None,
-                    "created_at": datetime.utcnow()
-                }
-                try:
-                    insert_place_result = places_collection.insert_one(new_place_data)
-                    new_place_id = insert_place_result.inserted_id
-                    print(f"Created new place for updated entry: {new_place_id}")
-                except Exception as e:
-                     print(f"Error creating new place during edit: {e}")
-                     return render_template('edit_entry.html', entry=entry, error="Error saving new place information.")
+             if existing_place:
+                 new_place_id = existing_place['_id']
+                 update_entry_place_id = (new_place_id != current_place_id)
+                 print(f"Linked to existing place by new address: {new_place_id}")
+             else:
+                 print(f"New address not found. Creating new place without geocoding during edit.")
+                 new_place_data = {
+                     "name": place_name,
+                     "address": place_address,
+                     "coordinates": None,
+                     "created_at": datetime.utcnow()
+                 }
+                 try:
+                     insert_place_result = places_collection.insert_one(new_place_data)
+                     new_place_id = insert_place_result.inserted_id
+                     update_entry_place_id = True
+                     print(f"Created new place and will link entry: {new_place_id}")
+                 except Exception as e:
+                      print(f"Error creating new place during edit without coordinates: {e}")
+                      return render_template('edit_entry.html', entry=entry, error="Error saving place information.")
+        else:
+             update_entry_place_id = False
 
 
         update_data = {
-            "place_id": new_place_id,
             "date": entry_date,
             "companions": companions,
             "rating": rating,
@@ -319,6 +401,10 @@ def edit_entry(entry_id):
             "review": review,
             "updated_at": datetime.utcnow()
         }
+
+        if update_entry_place_id:
+             update_data["place_id"] = new_place_id
+
 
         try:
             update_result = entries_collection.update_one(
@@ -336,6 +422,7 @@ def edit_entry(entry_id):
 
 
     else:
+        api_key = app.config.get('GOOGLE_MAP_API_KEY')
         if isinstance(entry.get('date'), datetime):
             entry['date_str'] = entry['date'].strftime('%Y-%m-%d')
         else:
@@ -348,8 +435,7 @@ def edit_entry(entry_id):
 
         entry['rating_str'] = str(entry['rating']) if entry.get('rating') is not None else ''
 
-        return render_template('edit_entry.html', entry=entry)
-
+        return render_template('edit_entry.html', entry=entry, api_key=api_key)
 
 @app.route('/entries/delete/<entry_id>', methods=['POST'])
 @login_required

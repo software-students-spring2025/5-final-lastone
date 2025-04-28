@@ -4,14 +4,12 @@
 
 {% block head_extra %}
     <style>
-        /* Set height for the map container */
         #map {
-            height: 100%; /* Make map fill its container */
-            min-height: 600px; /* Minimum height for the map */
+            height: 100%;
+            min-height: 600px;
         }
-        /* Ensure flex container takes full height */
         .map-container {
-             height: calc(100vh - 4rem - 3rem); /* Full viewport height minus header and main padding */
+             height: calc(100vh - 4rem - 3rem);
         }
     </style>
 {% endblock %}
@@ -42,6 +40,7 @@
     <script>
         const apiKey = "{{ api_key }}";
         const initialLocation = {{ initial_location | tojson }};
+        const initialZoom = {{ initial_zoom | tojson }};
         const points = {{ points | tojson }};
 
         let map;
@@ -54,16 +53,15 @@
                     mapDiv.innerHTML = '<div class="flex items-center justify-center h-full text-red-600 font-semibold">Google Maps API key is missing or invalid. Please check configuration.</div>';
                     mapDiv.classList.add('bg-red-100');
                 }
-                return; 
+                return;
             }
 
             const { Map } = await google.maps.importLibrary("maps");
             const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
 
-
             map = new Map(document.getElementById("map"), {
-                zoom: 12, 
-                center: initialLocation, 
+                zoom: initialZoom,
+                center: initialLocation,
                 mapId: "YOUR_MAP_ID",
             });
 
@@ -92,6 +90,6 @@
             document.head.appendChild(script);
         }
 
-        window.onload = loadGoogleMapsScript; 
+        window.onload = loadGoogleMapsScript;
     </script>
 {% endblock %}
