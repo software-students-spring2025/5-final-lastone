@@ -30,6 +30,10 @@ def get_db():
             db = None
     return db
 
+@app.before_request
+def before_request():
+    g.db = get_db()
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
