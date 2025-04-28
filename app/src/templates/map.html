@@ -1,20 +1,95 @@
 {% extends "base.html" %}
 
+{% block title %}Map - Geometric Journal{% endblock %}
+
+{% block head_extra %}
+    <style>
+        #map {
+            height: 100%;
+            min-height: 600px;
+        }
+        .map-container {
+             height: calc(100vh - 4rem - 3rem);
+        }
+    </style>
+{% endblock %}
+
 {% block content %}
-<div class="map-container">
-    <div id="map" style="height: 80vh; width: 100%;"></div>
-    <div id="info-panel" style="padding: 10px; background: #f0f0f0;"></div>
-</div>
+    <div class="flex flex-col md:flex-row map-container">
+        <div id="map" class="w-full md:w-3/4 h-96 md:h-auto rounded-lg shadow-md mb-6 md:mb-0 md:mr-6"></div>
 
-<!-- Load Google Maps API -->
-<script src="https://maps.googleapis.com/maps/api/js?key={{ api_key }}&callback=initMap&libraries=geometry" async defer></script>
+        <div class="w-full md:w-1/4 bg-gray-50 p-4 rounded-lg shadow-md overflow-y-auto">
+            <h2 class="text-lg font-semibold mb-4">Recent Locations</h2>
+            {% if recent_entries %}
+                <ul class="space-y-4">
+                    {% for entry in recent_entries %}
+                        <li class="border-b border-gray-200 pb-4 last:border-b-0 last:pb-0">
+                            <h3 class="text-md font-medium text-gray-800">{{ entry.get('place_name', 'Unknown Place') }}</h3>
+                            <p class="text-gray-600 text-sm">{{ entry.get('place_address', 'Unknown Address') }}</p>
+                            <p class="text-gray-500 text-xs mt-1">Visited on: {{ entry.get('formatted_date', 'N/A') }}</p>
+                             <a href="{{ url_for('edit_entry', entry_id=entry._id) }}" class="text-blue-600 hover:underline text-sm mt-1 inline-block">View Entry</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p class="text-gray-600 text-sm">No recent entries with locations yet.</p>
+            {% endif %}
+        </div>
+    </div>
 
-<script> console.log("Raw JSON:", '{{ points | tojson | safe }}'); </script>
+    <script>
+        const apiKey = "{{ api_key }}";
+        const initialLocation = {{ initial_location | tojson }};
+        const initialZoom = {{ initial_zoom | tojson }};
+        const points = {{ points | tojson }};
 
-<script>
-    window.initialLocation = {{ initial_location | tojson | safe }};
-    window.points = {{ points | tojson | safe }};
-</script>
-<!-- Your custom map JavaScript -->
-<script src="{{ url_for('static', filename='js/map.js') }}"></script>
+        let map;
+
+        async function initMap() {
+            if (!apiKey || apiKey === 'None') {
+                console.error("Google Maps API key is not configured.");
+                const mapDiv = document.getElementById('map');
+                if (mapDiv) {
+                    mapDiv.innerHTML = '<div class="flex items-center justify-center h-full text-red-600 font-semibold">Google Maps API key is missing or invalid. Please check configuration.</div>';
+                    mapDiv.classList.add('bg-red-100');
+                }
+                return;
+            }
+
+            const { Map } = await google.maps.importLibrary("maps");
+            const { AdvancedMarkerElement } = await google.maps.importLibrary("marker");
+
+            map = new Map(document.getElementById("map"), {
+                zoom: initialZoom,
+                center: initialLocation,
+                mapId: "YOUR_MAP_ID",
+            });
+
+            points.forEach(point => {
+                const marker = new AdvancedMarkerElement({
+                    map: map,
+                    position: { lat: point.lat, lng: point.lng },
+                    title: point.title,
+                });
+
+                const infoWindow = new google.maps.InfoWindow({
+                    content: `<h3>${point.title}</h3><p>${point.address}</p>`,
+                });
+
+                marker.addListener("click", () => {
+                    infoWindow.open(map, marker);
+                });
+            });
+        }
+
+        function loadGoogleMapsScript() {
+            const script = document.createElement('script');
+            script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap&libraries=geometry,marker&loading=async`;
+            script.async = true;
+            script.defer = true;
+            document.head.appendChild(script);
+        }
+
+        window.onload = loadGoogleMapsScript;
+    </script>
 {% endblock %}
