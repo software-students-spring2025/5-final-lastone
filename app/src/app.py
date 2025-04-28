@@ -6,7 +6,9 @@ from datetime import datetime
 import os
 from dotenv import load_dotenv
 import bcrypt
+
 from map import map_bp
+from utils import get_current_user_id, login_required
 
 load_dotenv()
 
@@ -33,6 +35,14 @@ def get_db():
 @app.before_request
 def before_request():
     g.db = get_db()
+    
+@app.teardown_appcontext
+def teardown_db(exception):
+    global client, db
+    if client is not None:
+        client.close()
+        client = None
+        db = None
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -49,7 +59,7 @@ def login():
 
         if user and bcrypt.checkpw(password.encode('utf-8'), user['password_hash']):
             session['user_id'] = str(user['_id'])
-            return redirect(url_for('my_entries'))
+            return redirect(url_for('map.show_map'))
         else:
             return render_template('login.html', error="Invalid username or password")
 
@@ -96,30 +106,6 @@ def create_account():
             return render_template('create_account.html', error="Error creating account.")
 
     return render_template('create_account.html')
-
-
-def get_current_user_id():
-    user_id_str = session.get('user_id')
-    if user_id_str:
-        try:
-            return ObjectId(user_id_str)
-        except:
-            session.pop('user_id', None)
-            return None
-    return None
-
-def login_required(view):
-    from functools import wraps
-    @wraps(view)
-    def wrapped_view(**kwargs):
-        if get_current_user_id() is None:
-            return redirect(url_for('login'))
-        return view(**kwargs)
-    return wrapped_view
-
-@app.before_request
-def before_request():
-    g.db = get_db()
     
 @app.route('/entries')
 @login_required
@@ -397,13 +383,6 @@ def delete_entry(entry_id):
         print(f"Error deleting entry {entry_id}: {e}")
         return "Error deleting entry from database.", 500
 
-
-@app.route('/')
-def index():
-    if get_current_user_id():
-        return redirect(url_for('my_entries'))
-    return redirect(url_for('login'))
-
 app.register_blueprint(map_bp)
 if __name__ == '__main__':
     db_connection = get_db()
@@ -411,3 +390,4 @@ if __name__ == '__main__':
        app.run(debug=True, port=5000)
     else:
        print("Failed to connect to database. Exiting.")
+

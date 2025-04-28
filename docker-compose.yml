@@ -7,6 +7,7 @@ services:
       - mongodb
     environment:
       MONGO_URI: ${MONGO_URI}
+      GOOGLE_MAP_API_KEY: ${GOOGLE_MAP_API_KEY}
     volumes:
       - ./app/src:/app
       
@@ -18,6 +19,7 @@ services:
       - mongo_data:/data/db
     environment:
       MONGO_URI: ${MONGO_URI}
+      GOOGLE_MAP_API_KEY: ${GOOGLE_MAP_API_KEY}
 
 volumes:
   mongo_data: {}
