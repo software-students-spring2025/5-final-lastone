@@ -26,7 +26,8 @@ def get_db():
             client = MongoClient(mongo_uri, serverSelectionTimeoutMS=5000)
             client.admin.command('ismaster')
             print("MongoDB connection successful!")
-            db = client.get_database('geometric_journal_db')
+            mongodb_name = os.getenv('MONGO_DBNAME', 'geometric_journal_db')
+            db = client.get_database(mongodb_name)
         except ConnectionFailure as e:
             print(f"MongoDB connection failed: {e}")
             db = None
@@ -167,7 +168,8 @@ def add_entry():
         if not place_name or not place_address or not entry_date_str or not review:
              return render_template('add_entry.html', error="Missing required fields.")
 
-        if latitude is not None and longitude is not None:
+
+        if latitude is not None and longitude is not None and latitude != "" and longitude != "":
              try:
                  latitude = float(latitude)
                  longitude = float(longitude)
@@ -176,7 +178,7 @@ def add_entry():
                  return render_template('add_entry.html', error="Invalid coordinate format.")
         else:
              coordinates = None
-
+        print("coordinates: " , coordinates)
 
         try:
             entry_date = datetime.strptime(entry_date_str, '%Y-%m-%d')
