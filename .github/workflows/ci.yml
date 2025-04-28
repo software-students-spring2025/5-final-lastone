@@ -31,14 +31,13 @@ jobs:
         MONGO_DBNAME: test
         FLASK_SECRET_KEY: ${{ secrets.FLASK_SECRET_KEY }}
       run: |
-        echo "TEST_MONGO_URI=mongodb://localhost:27017/test_geometric_journal_db" >> $GITHUB_ENV
         echo "MONGO_DBNAME=test" >> $GITHUB_ENV
         echo "FLASK_SECRET_KEY=test_secret_key" >> $GITHUB_ENV
     
     - name: Run tests
       run: |
         pip install -e .
-        pytest -v
+        pytest -v --tb=long  --showlocals -s
   
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
