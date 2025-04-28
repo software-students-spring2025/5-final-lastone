@@ -1,4 +1,6 @@
-Flask
+flask>=2.0.0
+itsdangerous>=2.0.0
+werkzeug>=2.0.0
 pymongo
 python-dotenv
 pytest
