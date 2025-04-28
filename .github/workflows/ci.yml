@@ -37,7 +37,6 @@ jobs:
     
     - name: Run tests
       run: |
-        pip install -e .
         pytest -v
   
     - name: Set up Docker Buildx
@@ -56,8 +55,8 @@ jobs:
     - name: Run Docker container
       run: docker-compose up -d
       env:
-        MONGO_DBNAME=final
-        MONGO_URI=${{ secrets.MONGO_URI }}
-        SECRET_KEY='12345'
-        GOOGLE_MAP_API_KEY = ${{ secrets.GOOGLE_MAP_API_KEY }}
+        MONGO_DBNAME: final
+        MONGO_URI: ${{ secrets.MONGO_URI }}
+        SECRET_KEY: '12345'
+        GOOGLE_MAP_API_KEY: ${{ secrets.GOOGLE_MAP_API_KEY }}
         FLASK_ENV: test
