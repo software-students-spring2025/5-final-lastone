@@ -59,4 +59,3 @@ jobs:
         MONGO_URI=${{ secrets.MONGO_URI }}
         SECRET_KEY='12345'
         GOOGLE_MAP_API_KEY = ${{ secrets.GOOGLE_MAP_API_KEY }}
-        FLASK_ENV: test
