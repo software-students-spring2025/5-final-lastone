@@ -8,7 +8,12 @@ from dotenv import load_dotenv
 from datetime import datetime
 from werkzeug.exceptions import NotFound, InternalServerError
 
-load_dotenv('.env.test')
+if os.getenv('GITHUB_ACTIONS') == 'true':
+    # Use environment variables directly in CI
+    pass
+else:
+    # Local development - load from .env.test
+    load_dotenv('env/.env.test')
 
 @pytest.fixture
 def app():
