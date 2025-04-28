@@ -6,16 +6,13 @@ def test_my_entries_unauthorized(client):
 def test_my_entries_authorized(auth_client):
     # First verify session exists
     response = auth_client.get('/entries')
-    print(response.data)
     assert response.status_code == 200
 
 def test_add_entry_page(auth_client):
     response = auth_client.get('/entries/add')
     assert response.status_code == 200
 
-def test_add_entry_success(auth_client, db):
-    print(f"Using MongoDB: {db.client.address}")  # Should show localhost:27017
-    print(f"Database name: {db.name}")  # Should be 'test_db' or similar    
+def test_add_entry_success(auth_client, db): 
     response = auth_client.post('/entries/add', data={
         'place_name': 'New Place',
         'place_address': '789 New St',
@@ -28,7 +25,6 @@ def test_add_entry_success(auth_client, db):
         'longitude': '-74.0060'
     })
 
-    print("All entries:", list(db.entries.find({})))
     new_entry = db.entries.find_one({
         'review': 'Excellent museum'
     })
@@ -37,7 +33,6 @@ def test_add_entry_success(auth_client, db):
     assert new_entry['rating'] == 5.0  # Check type conversion
     assert 'Friend1' in new_entry['companions']  # Check array conversion
     
-    print("Places:", list(db.places.find({})))
     place = db.places.find_one({
         'name': 'New Place',
         'address': '789 New St'

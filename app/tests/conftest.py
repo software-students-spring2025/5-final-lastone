@@ -119,6 +119,3 @@ def auth_client(client, db):
 def setup_test_env(monkeypatch):
     # Override database name for tests
     monkeypatch.setenv('MONGO_DBNAME', 'test')
-    
-    # Optional: Verify override worked
-    print(f"Using test database: {os.getenv('MONGO_DBNAME')}")

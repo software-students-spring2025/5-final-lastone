@@ -11,7 +11,6 @@ def test_map_page_authorized(auth_client):
 
 def test_map_points_data(auth_client, db):
     response = auth_client.get('/')
-    print(response.data.decode('utf-8'))
 
     assert b'points = [' in response.data
     assert b'Test Place 1' in response.data 
