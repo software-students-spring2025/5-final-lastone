@@ -4,10 +4,8 @@
 
 # Final Project
 
-An exercise to put to practice software development teamwork, subsystem communication, containers, deployment, and CI/CD pipelines. See [instructions](./instructions.md) for details.
-
 ## Introduction
-Geometric Journal is a Flask-based web application for journaling and visualizing your travels on an interactive map. We integrate the Google Maps API to power location search, autocomplete suggestions, and reverse geocoding—allowing users to easily find places by name or address.
+Geographic Journal is a Flask-based web application for journaling and visualizing your travels on an interactive map. We integrate the Google Maps API to power location search, autocomplete suggestions, and reverse geocoding—allowing users to easily find places by name or address.
 
 Users can:
 
