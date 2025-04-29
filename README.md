@@ -68,7 +68,6 @@ TEST_MONGO_URI=your_mongodb_uri
 SECRET_KEY='12345'
 GOOGLE_MAP_API_KEY=your_google_cloud_api_key
 ```
-```
 2. Run the following commands in the root directory
 ```
 pip install -e .
