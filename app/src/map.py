@@ -69,27 +69,12 @@ def show_map():
     api_key = current_app.config.get('GOOGLE_MAP_API_KEY')
 
     for entry in recent_entries:
-        entry['place_name'] = entry.get('place_info', {}).get('name', 'Unknown Place')
-        entry['place_address'] = entry.get('place_info', {}).get('address', 'Unknown Address')
-
-        if isinstance(entry.get('date'), datetime):
-            entry['formatted_date'] = entry['date'].strftime('%Y-%m-%d')
-        else:
-            entry['formatted_date'] = 'N/A'
-
-        place_info = entry.get('place_info')
-        if isinstance(place_info, dict):
-            coords = place_info.get('coordinates', {})
-            if coords.get('type') == 'Point' and len(coords.get('coordinates', [])) == 2:
-                lng, lat = coords['coordinates']
-                entry['latitude'] = lat
-                entry['longitude'] = lng
-            else:
-                entry['latitude'] = None
-                entry['longitude'] = None
-        else:
-            entry['latitude'] = None
-            entry['longitude'] = None
+         entry['place_name'] = entry.get('place_info', {}).get('name', 'Unknown Place')
+         entry['place_address'] = entry.get('place_info', {}).get('address', 'Unknown Address')
+         if isinstance(entry.get('date'), datetime):
+             entry['formatted_date'] = entry['date'].strftime('%Y-%m-%d')
+         else:
+             entry['formatted_date'] = 'N/A'
 
     return render_template(
         'map.html',
