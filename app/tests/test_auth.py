@@ -7,8 +7,12 @@ def test_successful_login(client, db):
     response = client.post('/login', data={
         'username': 'testuser',
         'password': 'testpassword'
-    }, follow_redirects=True)
-    assert response.status_code == 200
+    }, follow_redirects=False)
+    assert response.status_code == 302
+    assert '/' in response.headers['Location']
+
+    with client.session_transaction() as session:
+        assert 'user_id' in session
 
 def test_failed_login(client):
     response = client.post('/login', data={
