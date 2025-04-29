@@ -15,6 +15,10 @@ Users can:
 - **Browse** all entries on an interactive map or in a recent-entries list, clicking markers to reveal detailed information.
 - **Edit & Delete** existing entries as needed.
 
+## Deploy Site
+
+http://69.55.54.82:5001/ 
+
 ## Team
 
 - [Jinzhi Cao](https://github.com/eth3r3aI)
