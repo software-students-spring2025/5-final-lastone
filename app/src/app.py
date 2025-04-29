@@ -152,6 +152,8 @@ def add_entry():
 
     entries_collection = db.entries
     places_collection = db.places
+    
+    api_key = app.config.get('GOOGLE_MAP_API_KEY')
 
     if request.method == 'POST':
         place_name = request.form.get('place_name')
@@ -253,7 +255,6 @@ def add_entry():
 
 
     else:
-        api_key = app.config.get('GOOGLE_MAP_API_KEY')
         return render_template('add_entry.html', api_key=api_key)
 
 
