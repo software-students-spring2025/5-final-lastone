@@ -1,17 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>My Journal Entries - Geometric Journal</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <style>
-        body {
-            font-family: 'Inter', sans-serif;
-        }
-    </style>
-</head>
+{% extends "base.html" %}
+{% block content %}
 <body class="bg-gray-100 min-h-screen p-6">
     <div class="container mx-auto bg-white p-8 rounded-lg shadow-md">
         <h1 class="text-3xl font-semibold text-center mb-6">My Journal Entries</h1>
@@ -71,4 +59,4 @@
 
     </div>
 </body>
-</html>
+{% endblock %}
