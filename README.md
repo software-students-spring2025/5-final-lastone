@@ -44,13 +44,20 @@ http://69.55.54.82:5001/
 
 ## Prerequisites
 
-- Docker installed on your system
-- Python 3.9+ for local development (optional - containers include Python)
+- MongoDB setup locally / cloud
+- Google Cloud API set up
 
 ## Setup
 
 1. Install Docker and Docker Compose
 2. Clone this repository
+3. Paste the connection string we've sent you over Discord, or set up your own database using Mongo Atlas and copy your connection string into a .env file in the web-app folder with the following format:
+```
+MONGO_DBNAME=geometric_journal_db
+MONGO_URI=your_mongodb_uri
+SECRET_KEY='12345'
+GOOGLE_MAP_API_KEY = your_google_cloud_api_key
+```
 3. Run `docker-compose up --build`
 4. Go to http://localhost:5001
 
