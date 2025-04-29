@@ -1,5 +1,5 @@
 [![CI](https://github.com/software-students-spring2025/5-final-lastone/actions/workflows/ci.yml/badge.svg)](https://github.com/software-students-spring2025/5-final-lastone/actions/workflows/ci.yml)
-[![CD](https://github.com/software-students-spring2025/5-final-lastone/actions/workflows/deploy.yml/badge.svg)](https://github.com/software-students-spring2025/5-final-lastone/actions/workflows/cd.yml)
+[![CD](https://github.com/software-students-spring2025/5-final-lastone/actions/workflows/cd.yml/badge.svg)](https://github.com/software-students-spring2025/5-final-lastone/actions/workflows/cd.yml)
 [![log github events](https://github.com/software-students-spring2025/5-final-lastone/actions/workflows/event-logger.yml/badge.svg)](https://github.com/software-students-spring2025/5-final-lastone/actions/workflows/event-logger.yml)
 
 # Final Project
