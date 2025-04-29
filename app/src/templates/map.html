@@ -83,7 +83,12 @@
                 });
 
                 const infoWindow = new google.maps.InfoWindow({
-                    content: `<h3>${point.title}</h3><p>${point.address}</p>`,
+                    content: `
+                    <div class="info-window">
+                        <div class="title">${point.title}</div>
+                        <div class="address">${point.address}</div>
+                    </div>
+                    `,
                 });
 
                 marker.addListener("click", () => {
