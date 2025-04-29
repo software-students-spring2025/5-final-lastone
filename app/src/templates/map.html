@@ -24,19 +24,16 @@
                 <ul class="space-y-4">
                     {% for entry in recent_entries %}
                         <li class="border-b border-gray-200 pb-4 last:border-b-0 last:pb-0">
-                            <h3 class="text-md font-medium text-gray-800">
-                                {% if entry.latitude and entry.longitude %}
-                                <button class="focus-location text-left hover:underline"
-                                        data-lat="{{ entry.latitude }}"
-                                        data-lng="{{ entry.longitude }}"
-                                        data-title="{{ entry.place_name }}"
-                                        data-address="{{ entry.place_address }}">
-                                    {{ entry.place_name }}
+                            {% if entry.place_info and entry.place_info.coordinates and entry.place_info.coordinates.type == 'Point' %}
+                                <button
+                                class="focus-location text-left hover:underline text-md font-semibold"
+                                data-lat="{{ entry.place_info.coordinates.coordinates[1] }}"
+                                data-lng="{{ entry.place_info.coordinates.coordinates[0] }}">
+                                {{ entry.place_name }}
                                 </button>
-                                {% else %}
-                                    {{ entry.place_name }}
-                                {% endif %}
-                            </h3>
+                            {% else %}
+                                <h3 class="text-md font-medium text-gray-800">{{ entry.place_name }}</h3>
+                            {% endif %}
                             <p class="text-gray-600 text-sm">Visited on: {{ entry.get('formatted_date', 'N/A') }}</p>
                             <p class="text-gray-500 text-xs mt-1">{{ entry.get('place_address', 'Unknown Address') }}</p>
                              <a href="{{ url_for('edit_entry', entry_id=entry._id) }}" class="text-blue-600 hover:underline text-sm mt-1 inline-block">View Entry</a>
@@ -101,13 +98,9 @@
                     const lat = parseFloat(button.dataset.lat);
                     const lng = parseFloat(button.dataset.lng);
 
-                    const location = { lat, lng };
-                    map.setCenter(location);
-                    map.setZoom(15);
-
-                    const match = markers.find(m => m.lat === lat && m.lng === lng);
-                    if (match && match.infoWindow) {
-                        match.infoWindow.open(map, match.marker);
+                    if (!isNaN(lat) && !isNaN(lng)) {
+                        map.setCenter({ lat, lng });
+                        map.setZoom(15);
                     }
                 });
             });
