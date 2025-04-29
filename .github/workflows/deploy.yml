@@ -36,7 +36,6 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            docker pull eth3r3ai/lastone:latest
-            docker stop your-container-name || true
-            docker rm your-container-name || true
-            docker run -d --name your-container-name -p 80:80 your-dockerhub-username/your-image-name:latest
+            cd /opt/lastone
+            docker-compose pull
+            docker-compose up -d --remove-orphans
