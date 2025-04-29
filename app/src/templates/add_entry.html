@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="container mx-auto bg-white p-8 rounded-lg shadow-md w-full max-w-md form-container">
+    <div class="form-container">
         <h1 class="text-2xl font-semibold text-center mb-6">Add New Journal Entry</h1>
 
         {% if error %}
@@ -12,11 +12,13 @@
             <input type="hidden" id="latitude" name="latitude">
             <input type="hidden" id="longitude" name="longitude">
 
-            <input id="pac-input" class="map-search-input" type="text" placeholder="Search for a place">
+            <div class="center-map-input">
+                <input id="pac-input" class="map-search-input" type="text" placeholder="Search for a place">
+            </div>
 
             <div id="add-entry-map"></div>
 
-            <div>
+            <div class="form-field">
                 <label for="date" class="block text-sm font-medium text-gray-700">Date:</label>
                 <input type="date" id="date" name="date" required
                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
@@ -31,12 +33,12 @@
                 <input type="text" id="place_address" name="place_address" required
                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
             </div>
-            <div>
+            <div class="form-field">
                 <label for="companions" class="block text-sm font-medium text-gray-700">Companions (comma-separated):</label>
                 <input type="text" id="companions" name="companions"
                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
             </div>
-            <div>
+            <div class="form-field">
                 <label for="rating">Rating:</label>
                 <div class="star-rating">
                     <input type="hidden" id="rating" name="rating" value="0">
@@ -49,12 +51,12 @@
                     </div>
                 </div>
             </div>
-             <div>
+             <div class="form-field">
                 <label for="category" class="block text-sm font-medium text-gray-700">Category:</label>
                 <input type="text" id="category" name="category"
                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
             </div>
-            <div>
+            <div class="form-field">
                 <label for="review" class="block text-sm font-medium text-gray-700">Review:</label>
                 <textarea id="review" name="review" rows="4" required
                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"></textarea>
