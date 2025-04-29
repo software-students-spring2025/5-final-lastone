@@ -3,3 +3,56 @@
     width: 100%;
     background: #f0f0f0; /* Gray fallback */
 }
+
+/* --- Rating Styles --- */
+.star-rating {
+    font-size: 2rem;
+    color: lightgray;
+    cursor: pointer;
+    display: inline-block;
+    margin-top: 0.5rem;
+}
+
+.stars {
+    display: flex;
+    flex-direction: row;
+    gap: 0.5rem; 
+}
+
+.star {
+    width: 2rem;
+    height: 2rem;
+    position: relative;
+}
+
+.star::before {
+    content: "\2605";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    font-size: 2rem;
+    color: lightgray;
+    pointer-events: none;
+}
+
+.star.full::before {
+    color: gold;
+}
+
+.star.half::after {
+    content: "\2605";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 50%;
+    height: 150%;
+    overflow: hidden;
+    color: gold;
+    pointer-events: none;
+}
+
+.rating-container {
+    margin-top: 1rem;
+}
