@@ -56,10 +56,26 @@ http://69.55.54.82:5001/
 MONGO_DBNAME=geometric_journal_db
 MONGO_URI=your_mongodb_uri
 SECRET_KEY='12345'
-GOOGLE_MAP_API_KEY = your_google_cloud_api_key
+GOOGLE_MAP_API_KEY=your_google_cloud_api_key
 ```
 3. Run `docker-compose up --build`
 4. Go to http://localhost:5001
+
+## Tests
+1. Create a new folder under root folder named `env
+2. Within that folder, enter for the test env that we lrovide, or enter your own credentials
+```
+MONGO_DBNAME=test
+TEST_MONGO_URI=your_mongodb_uri
+SECRET_KEY='12345'
+GOOGLE_MAP_API_KEY=your_google_cloud_api_key
+```
+```
+2. Run the following commands in the root directory
+```
+pip install -e .
+pytest -v app/tests
+```
 
 ## Configuration
 
