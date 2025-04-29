@@ -1,7 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
-<div class="container mx-auto bg-white p-8 rounded-lg shadow-md w-full max-w-md form-container">
+<div class="form-container">
     <h1 class="text-2xl font-semibold text-center mb-6">Edit Journal Entry</h1>
 
     {% if error %}
@@ -16,22 +16,25 @@
         <input type="hidden" id="place_name" name="place_name" value="{{ entry.get('place_name', '') }}">
         <input type="hidden" id="place_address" name="place_address" value="{{ entry.get('place_address', '') }}">
 
-        <input id="pac-input" class="map-search-input" type="text" placeholder="Search for a place" value="{{ entry.get('place_name', '') }}">
+        <div class="center-map-input">
+            <input id="pac-input" class="map-search-input" type="text" placeholder="Search for a place" value="{{ entry.get('place_name', '') }}">
+        </div>
+        
         <div id="edit-entry-map"></div>
         
-        <div>
+        <div class="form-field">
             <label for="date" class="block text-sm font-medium text-gray-700">Date:</label>
             <input type="date" id="date" name="date" value="{{ entry.get('date_str', '') }}" required
                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
         </div>
 
-        <div>
+        <div class="form-field">
             <label for="companions" class="block text-sm font-medium text-gray-700">Companions (comma-separated):</label>
             <input type="text" id="companions" name="companions" value="{{ entry.get('companions_str', '') }}"
                     class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
         </div>
 
-        <div>
+        <div class="form-field">
             <label for="rating">Rating:</label>
             <div class="star-rating">
                 <input type="hidden" id="rating" name="rating" value="{{ entry.get('rating_str', '0') }}">
@@ -45,12 +48,12 @@
             </div>
         </div>
 
-        <div>
+        <div class="form-field">
             <label for="category" class="block text-sm font-medium text-gray-700">Category:</label>
             <input type="text" id="category" name="category" value="{{ entry.get('category', '') }}"
                    class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
         </div>
-        <div>
+        <div class="form-field">
             <label for="review">Review:</label>
             <textarea id="review" name="review" rows="4" required
                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">{{ entry.get('review', '') }}</textarea>
