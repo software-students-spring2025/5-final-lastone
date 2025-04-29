@@ -1,5 +1,5 @@
 [![CI](https://github.com/software-students-spring2025/5-final-lastone/actions/workflows/ci.yml/badge.svg)](https://github.com/software-students-spring2025/5-final-lastone/actions/workflows/ci.yml)
-[![Deploy to DigitalOcean](https://github.com/software-students-spring2025/5-final-lastone/actions/workflows/deploy.yml/badge.svg)](https://github.com/software-students-spring2025/5-final-lastone/actions/workflows/deploy.yml)
+[![CD](https://github.com/software-students-spring2025/5-final-lastone/actions/workflows/deploy.yml/badge.svg)](https://github.com/software-students-spring2025/5-final-lastone/actions/workflows/cd.yml)
 [![log github events](https://github.com/software-students-spring2025/5-final-lastone/actions/workflows/event-logger.yml/badge.svg)](https://github.com/software-students-spring2025/5-final-lastone/actions/workflows/event-logger.yml)
 
 # Final Project
@@ -14,6 +14,10 @@ Users can:
 - **Log** places they’ve visited with date, name, address, companions, category, rating (including half-star increments), and a review.
 - **Browse** all entries on an interactive map or in a recent-entries list, clicking markers to reveal detailed information.
 - **Edit & Delete** existing entries as needed.
+
+## Deploy Site
+
+http://69.55.54.82:5001/ 
 
 ## Team
 
