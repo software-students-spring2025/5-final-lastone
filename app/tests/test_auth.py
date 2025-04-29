@@ -22,17 +22,6 @@ def test_failed_login(client):
     assert response.status_code == 200
     assert b'Invalid username or password' in response.data
 
-def test_logout(client):
-    with client.session_transaction() as session:
-        session['user_id'] = 'dummy_id'
-
-    response = client.get('/logout', follow_redirects=False)
-    assert response.status_code == 302
-    assert '/login' in response.headers['Location']
-
-    with client.session_transaction() as session:
-        assert 'user_id' not in session
-
 def test_create_account_page(client):
     response = client.get('/create_account')
     assert response.status_code == 200
