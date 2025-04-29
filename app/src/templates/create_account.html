@@ -4,43 +4,45 @@
 
 {% block content %}
 <body class="bg-gray-100 min-h-screen flex items-center justify-center">
-    <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-sm">
-        <h1 class="text-2xl font-semibold text-center mb-6">Create Your Account</h1>
+    <div class="centered-page">
+        <div class="card">
+            <h1 class="text-2xl font-semibold text-center mb-6">Create Your Account</h1>
 
-        {% if error %}
-            <p class="text-red-500 text-center mb-4">{{ error }}</p>
-        {% endif %}
+            {% if error %}
+                <p class="text-red-500 text-center mb-4">{{ error }}</p>
+            {% endif %}
 
-        <form action="{{ url_for('create_account') }}" method="post" class="space-y-4">
-            <div>
-                <label for="username" class="block text-sm font-medium text-gray-700">Username:</label>
-                <input type="text" id="username" name="username" required
-                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-            </div>
-            <div>
-                <label for="password" class="block text-sm font-medium text-gray-700">Password:</label>
-                <input type="password" id="password" name="password" required
-                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-            </div>
-             <div>
-                <label for="confirm_password" class="block text-sm font-medium text-gray-700">Confirm Password:</label>
-                <input type="password" id="confirm_password" name="confirm_password" required
-                       class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-            </div>
-            <div>
-                <button type="submit"
-                        class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
-                    Create Account
-                </button>
-            </div>
-        </form>
+            <form action="{{ url_for('create_account') }}" method="post" class="space-y-4">
+                <div>
+                    <label for="username" class="block text-sm font-medium text-gray-700">Username:</label>
+                    <input type="text" id="username" name="username" required
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                </div>
+                <div>
+                    <label for="password" class="block text-sm font-medium text-gray-700">Password:</label>
+                    <input type="password" id="password" name="password" required
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                </div>
+                <div>
+                    <label for="confirm_password" class="block text-sm font-medium text-gray-700">Confirm Password:</label>
+                    <input type="password" id="confirm_password" name="confirm_password" required
+                        class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+                </div>
+                <div>
+                    <button type="submit"
+                            class="w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500">
+                        Create Account
+                    </button>
+                </div>
+            </form>
 
-        <p class="mt-6 text-center text-sm text-gray-600">
-            Already have an account?
-            <a href="{{ url_for('login') }}" class="font-medium text-blue-600 hover:text-blue-500">
-                Login Here
-            </a>
-        </p>
+            <p class="mt-6 text-center text-sm text-gray-600">
+                Already have an account?
+                <a href="{{ url_for('login') }}" class="font-medium text-blue-600 hover:text-blue-500">
+                    Login Here
+                </a>
+            </p>
+        </div>
     </div>
 </body>
 {% endblock %}
