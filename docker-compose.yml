@@ -1,4 +1,9 @@
 services:
+  web:
+    image: eth3r3ai/lastone:latest
+    ports:
+      - "80:80"
+    restart: always
   app:
     build: ./app
     ports:
@@ -10,7 +15,7 @@ services:
       GOOGLE_MAP_API_KEY: ${GOOGLE_MAP_API_KEY}
     volumes:
       - ./app/src:/app
-      
+  
   mongodb:
     image: mongo:latest
     ports:
