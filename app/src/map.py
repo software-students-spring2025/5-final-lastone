@@ -77,11 +77,16 @@ def show_map():
         else:
             entry['formatted_date'] = 'N/A'
 
-        coords = entry.get('place_info', {}).get('coordinates', {})
-        if coords.get('type') == 'Point' and len(coords.get('coordinates', [])) == 2:
-            lng, lat = coords['coordinates']
-            entry['latitude'] = lat
-            entry['longitude'] = lng
+        place_info = entry.get('place_info')
+        if isinstance(place_info, dict):
+            coords = place_info.get('coordinates', {})
+            if coords.get('type') == 'Point' and len(coords.get('coordinates', [])) == 2:
+                lng, lat = coords['coordinates']
+                entry['latitude'] = lat
+                entry['longitude'] = lng
+            else:
+                entry['latitude'] = None
+                entry['longitude'] = None
         else:
             entry['latitude'] = None
             entry['longitude'] = None

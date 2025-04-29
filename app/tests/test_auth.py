@@ -1,26 +1,9 @@
-import pytest
-import bcrypt
-from flask import g
-from datetime import datetime
-
-@pytest.fixture
-def create_test_user():
-    db = g.db
-    users_collection = db.users
-    users_collection.delete_many({})  # clean slate
-    hashed = bcrypt.hashpw(b'testpassword', bcrypt.gensalt())
-    users_collection.insert_one({
-        "username": "testuser",
-        "password_hash": hashed,
-        "created_at": datetime.utcnow()
-    })
-
 def test_login_page(client):
     response = client.get('/login')
     assert response.status_code == 200
     assert b'Login' in response.data
 
-def test_successful_login(client, create_test_user):
+def test_successful_login(client, db):
     response = client.post('/login', data={
         'username': 'testuser',
         'password': 'testpassword'
