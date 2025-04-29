@@ -36,6 +36,6 @@ jobs:
           username: ${{ secrets.SERVER_USER }}
           key: ${{ secrets.SERVER_SSH_KEY }}
           script: |
-            cd /opt/lastone
+            cd /opt/5-final-lastone
             docker-compose pull
             docker-compose up -d --remove-orphans
